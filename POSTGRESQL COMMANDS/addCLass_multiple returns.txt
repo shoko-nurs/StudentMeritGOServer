@@ -1,0 +1,52 @@
+create or replace function addClass( in newClass varchar,
+						    in user_id int,
+						  	out status int)
+
+-- Declared status codes
+--  - 0 : success
+--  - 1 : error, the class already exists
+--  - 2 : error, 3 classes added by the user
+
+
+language plpgsql
+as $$
+
+declare
+	added int;
+
+begin
+	
+	
+
+	-- 	Select number of classes added. The result can be empty, the next line checks if it is null
+		select added_classes into added from user_class_number_added where user_added=user_id;
+
+	-- 	This is how null checked in postgres. If null, it must become 0. 
+		if added is null then
+			added = 0;
+		elsif added = 3 and user_id!=1 then
+			status = 2;
+			return;	
+		end if;
+		
+
+
+
+		begin
+			insert into "class"("class",user_added) values(newClass, user_id);
+		exception when others then 
+			status = 1;
+			return;
+		end;
+
+
+		if added=0 then
+			added = added+1;
+			insert into "user_class_number_added"(user_added, added_classes) values(user_id, added);
+		else
+			update user_class_number_added set added_classes=added+1 where user_added=user_id;
+		end if;
+		status = 0;
+		return;
+end;
+$$
