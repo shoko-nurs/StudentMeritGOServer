@@ -1,0 +1,45 @@
+create or replace function deleteScoreType(in score_id int,
+										   in request_user_id int,
+										  out status int) 
+
+-- Declared status codes
+--  - 10 : success
+--  - 11 : error, access denied
+--  - 12 : no score exists
+
+
+
+language plpgsql
+as $$
+	
+declare 
+		ownerAdded int;
+		scoresAdded int;
+		affectedrows int;
+-- 		test
+		testId int;
+	
+begin
+		select user_added into ownerAdded from score where id=score_id;
+		select added_scores into scoresAdded from user_score_number_added where user_added=ownerAdded;
+		
+-- 		Check if the request user matches to the owner id. But we allow user 1 (superuser)
+		if request_user_id!=ownerAdded and request_user_id!=1 then
+			status = 11;
+			return;
+		end if;
+		
+		
+		with a as (delete from score where id=score_id returning 1)
+		select count(*) into affectedrows from a;
+
+		if affectedrows = 0 then
+			status = 12;
+			return;
+		end if;
+		
+		update user_score_number_added set added_scores=scoresAdded-1 where user_added=ownerAdded;
+		status = 10;
+		return;
+end;
+$$

@@ -1,0 +1,29 @@
+-- PROCEDURE: public.deleteclass(integer, integer)
+
+-- DROP PROCEDURE IF EXISTS public.deleteclass(integer, integer);
+
+CREATE OR REPLACE PROCEDURE public.deleteclass(
+	IN user_id integer,
+	IN class_id integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+
+declare
+	added int;
+begin
+
+-- 	Select added_classes number
+	select added_classes into added from user_class_number_added where user_added=user_id;
+	
+-- 	Delete the current class
+
+	delete from "class" where id=class_id;
+	
+-- Update added classes number
+	update user_class_number_added set added_classes=added-1 where user_added=user_id;
+
+		
+end;
+$BODY$;
+ALTER PROCEDURE public.deleteclass(integer, integer)
+    OWNER TO iribplaryfjgwo;
