@@ -15,10 +15,11 @@ import (
 
 var APIEP = map[string]string{
 
-	"host"           : "http://localhost:8080",
-	"manage_classes" : "/api/manage_classes",
-	"get_endpoints"  : "/api/get_endpoints",
-	"manage_scores"  : "/api/manage_scores",
+	"host"            : "http://localhost:8080",
+	"manage_classes"  : "/api/manage_classes",
+	"get_endpoints"   : "/api/get_endpoints",
+	"manage_scores"   : "/api/manage_scores",
+	"manage_students" : "/api/manage_students",
 }
 
 
@@ -60,6 +61,7 @@ func RunServerFunc(){
 	r.HandleFunc(APIEP["get_endpoints"], GetEndpoints)
 	r.HandleFunc(APIEP["manage_classes"], classMainPageAPIView)
 	r.HandleFunc(APIEP["manage_scores"], scoresManager)
+	r.HandleFunc(APIEP["manage_students"], studentsManager)
 	r.HandleFunc("/", testingFunc)
 	http.ListenAndServe(":8080", r)
 

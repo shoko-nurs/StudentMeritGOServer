@@ -1,0 +1,59 @@
+CREATE OR REPLACE FUNCTION ADDNEWSTUDENT(in "name" varchar, 
+										 in surname varchar, 
+										 in class_id int, 
+										 in class_name varchar, 
+										 in request_user_id,
+										out status)
+										
+-- Declared status codes
+--  - 10 : success
+--  - 11 : this student is already added
+--  - 12 : You can't add more than 10 students
+
+										 
+										 
+LANGUAGE PLPGSQL AS $$
+
+declare
+	studentsAdded int;
+	
+begin
+
+--  Get number of classes already added
+	select students_added into studentsAdded 
+	from user_student_number_added where user_added=request_user_id;
+	
+-- 	return of number of classes is already 10 or more
+	if studentsAdded >= 10 then
+		status = 12;
+		return;
+	end if;
+	
+	
+	begin
+		insert into student("name", surname, class_id, class_name,user_added)
+		values (name, surname, class_id, class_name, request_user_id);
+		
+-- 		Check if studensAdded is null. This means a user has not added anything yet
+		if studensAdded is null then
+			insert into user_student_number_added(user_added, students_added) 
+			values(request_user_id, 1);
+		else
+-- 		If it is not null, then update entry by +1
+			update user_student_number_added set students_added=studentsAdded+1 
+			where user_added=request_user_id;
+		end if;
+		
+	exception when others then
+-- 	This means that this student is already in the database
+		status = 11;
+		return;
+	end;
+
+
+
+
+
+
+end;
+$$

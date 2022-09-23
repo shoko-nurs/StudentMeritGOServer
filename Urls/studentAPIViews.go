@@ -1,0 +1,152 @@
+package Urls
+
+import (
+	"StudentMerit/HerokuDB"
+	"StudentMerit/Structures"
+	"StudentMerit/auth"
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+
+
+func studentsManager(w http.ResponseWriter, r*http.Request) {
+	EnableCORSALL(&w)
+	user, err := auth.Authenticate(r)
+	if err != nil {
+		json.NewEncoder(w).Encode(
+			map[string]string{
+				"message": err.Error(),
+			})
+		return
+	}
+
+	if r.Method == "GET" {
+
+		qStr := fmt.Sprintf(`SELECT * FROM student ORDER BY class_name`)
+		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message": err.Error(),
+				})
+			return
+		}
+
+		var allStudents []Structures.Student
+		for rows.Next() {
+			var s Structures.Student
+			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.CurrentScore, &s.ClassName, &s.UserAdded)
+			allStudents = append(allStudents, s)
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"students": allStudents,
+				"ep":       APIEP,
+			})
+
+	}
+
+	if r.Method == "POST" {
+		var ns Structures.Student
+		json.NewDecoder(r.Body).Decode(&ns)
+
+		ns.UserAdded = user
+		err= ns.Validate(r)
+		if err!=nil{
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message": err.Error(),
+				})
+			return
+		}
+
+		qStr := fmt.Sprintf(`select addNewStudent('%s', '%s',%v, '%s',%v)`,
+			ns.Name, ns.Surname, ns.ClassId, ns.ClassName, ns.UserAdded)
+
+		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+		var result int
+		err = row.Scan(&result)
+
+		if err!=nil{
+
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message": err.Error(),
+				})
+			return
+		}
+
+		var message string
+		var status int
+		if result == 10{
+			message="Student is added"
+			status = 200
+		}else if result == 11 {
+			message="This student is already added"
+			status=400
+		}else{
+			message="You can't add more than 10 students"
+			status=400
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"message": message,
+				"status": status,
+			})
+
+		return
+	}
+
+	if r.Method == "DELETE"{
+		var s Structures.Student
+		json.NewDecoder(r.Body).Decode(&s)
+		fmt.Println(s.Id)
+		fmt.Println(s.UserAdded)
+
+		qStr := fmt.Sprintf(`SELECT deleteStudent(%v,%v,%v)`,s.Id,s.UserAdded,user)
+
+		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+
+		var result int
+		err = row.Scan(&result)
+
+
+		if err!=nil{
+			json.NewEncoder(w).Encode(
+
+				map[string]interface{}{
+					"message":err.Error(),
+					"status":400,
+				})
+				return
+		}
+		var message string
+		var status int
+
+		if result == 10{
+			message="OK"
+			status=200
+		}else if result == 12{
+			message="You can't add more than 10 students"
+			status=400
+		}else{
+			message="Access Denied!"
+			status=400
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"message":message,
+				"status":status,
+			})
+
+
+
+	}
+}

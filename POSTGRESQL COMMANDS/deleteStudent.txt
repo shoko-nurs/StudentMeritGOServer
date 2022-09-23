@@ -1,0 +1,36 @@
+create or replace function deleteStudent(in student_id int,
+										 in owner_id int,
+										 in request_user_id int,
+										out status int)
+-- Declared status codes
+--  - 10 : success
+--  - 11 : error, access denied
+--  - 12 : no student exists
+
+LANGUAGE PLPGSQL AS 
+$$
+declare
+	studentsAdded int;
+	affectedRows int;
+begin
+
+		select students_added into studentsAdded from user_student_number_added where user_added=owner_id;
+		
+		if request_user_id!=owner_id and request_user_id!=1 then
+			status = 11;
+			return;
+		end if;
+		
+		
+		with a as (delete from student where id=student_id returning 1)
+		select count(*) into affectedRows rows from a;
+		if affectedRows = 0 then
+			status = 12;
+			return;
+		end if;
+		update user_student_number_added set students_added=studentsAdded-1 where user_added=owner_id;
+		status=10;
+		return;
+	
+end;
+$$
