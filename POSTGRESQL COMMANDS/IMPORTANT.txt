@@ -1,0 +1,3 @@
+1) When making custom table from different columns from different tables, in GO use qStr:= SELECT * FROM myFUnction()
+This will return ordinary table
+IF you use simple select myFunction(), this will return weird record, which is useless in Go. 

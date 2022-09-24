@@ -149,4 +149,40 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 
 
 	}
+
+	if r.Method == "PUT"{
+		var uS Structures.Student
+		json.NewDecoder(r.Body).Decode(&uS)
+		fmt.Println(uS)
+		err = uS.Validate(r)
+		if err!=nil{
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message":err.Error(),
+				})
+				return
+		}
+
+		qStr := fmt.Sprintf(`UPDATE student SET name='%s', surname='%s',class_id=%v, class_name='%s' where id=%v`,
+			uS.Name, uS.Surname, uS.ClassId,uS.ClassName, uS.Id )
+		fmt.Println(qStr)
+		_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+		if err!=nil{
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message":err.Error(),
+				})
+				return
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"message":"OK",
+				"status":200,
+			})
+
+
+
+
+	}
 }

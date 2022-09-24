@@ -15,13 +15,18 @@ type Student struct {
 	ClassName string	`json:"class_name,omitempty"`
 	CurrentScore int64	`json:"current_score,omitempty"`
 	UserAdded uint64    `json:"user_added"`
+
+	//NewName string		`json:"new_name,omitempty"`
+	//NewSurname string   `json:"new_surname,omitempty"`
+	//NewClass uint64     `json:"new_class,omitempty"`
+
 }
 
 
 func (s *Student) Validate(r *http.Request) error{
 	var err error
 
-	if r.Method=="POST" {
+	if r.Method=="POST" || r.Method=="PUT" {
 		// Lower name and surname, remove all spaces
 		name := strings.ToLower(s.Name)
 		name = strings.ReplaceAll(name, " ", "")

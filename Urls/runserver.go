@@ -20,6 +20,8 @@ var APIEP = map[string]string{
 	"get_endpoints"   : "/api/get_endpoints",
 	"manage_scores"   : "/api/manage_scores",
 	"manage_students" : "/api/manage_students",
+	"manage_records"  : "/api/manage_records",
+
 }
 
 
@@ -62,6 +64,7 @@ func RunServerFunc(){
 	r.HandleFunc(APIEP["manage_classes"], classMainPageAPIView)
 	r.HandleFunc(APIEP["manage_scores"], scoresManager)
 	r.HandleFunc(APIEP["manage_students"], studentsManager)
+	r.HandleFunc(APIEP["manage_records"], recordManager)
 	r.HandleFunc("/", testingFunc)
 	http.ListenAndServe(":8080", r)
 
