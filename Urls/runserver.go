@@ -15,7 +15,7 @@ import (
 
 var APIEP = map[string]string{
 
-	"host"            : "http://localhost:8080",
+	"host"            : "https://shokonurs-student-merit.herokuapp.com",
 	"manage_classes"  : "/api/manage_classes",
 	"get_endpoints"   : "/api/get_endpoints",
 	"manage_scores"   : "/api/manage_scores",
