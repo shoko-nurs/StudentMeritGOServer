@@ -22,14 +22,14 @@ var (
 	PASSWORD = os.Getenv("PASSWORD")
 	DBNAME     = os.Getenv("DBNAME")
 	HOST     = os.Getenv("HOST")
-	PORT     = os.Getenv("PORT")
+	DBPORT     = os.Getenv("DBPORT")
 )
 
 
 func GetHerokuDB() *pgxpool.Pool{
 
 
-	qStr := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v",USER,PASSWORD,HOST,PORT,DBNAME)
+	qStr := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v",USER,PASSWORD,HOST,DBPORT,DBNAME)
 
 	db, err := pgxpool.Connect(context.Background(), qStr)
 	//db, err := sql.Open("pgx",qStr)

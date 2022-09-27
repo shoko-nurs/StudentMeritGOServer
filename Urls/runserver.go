@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
+
 	//"net/url"
 )
 
@@ -69,7 +71,13 @@ func RunServerFunc(){
 	r.HandleFunc(APIEP["student_records"]+"/{id:[0-9]+}", getRecordsForStudent)
 	r.HandleFunc("/", testingFunc)
 
-	http.ListenAndServe(":8080", r)
+
+	/// This is used for Heroku deployment
+	herokuPort := os.Getenv("PORT")
+	http.ListenAndServe(":"+herokuPort, r)
+
+	//// This is used for localserver
+	//http.ListenAndServe(":8080", r)
 
 }
 
