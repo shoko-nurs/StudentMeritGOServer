@@ -14,7 +14,7 @@ import (
 
 
 func DeleteClassAPIView(w http.ResponseWriter, r *http.Request){
-	EnableCORSALL(&w)
+	EnableCORSALL(&w, mode)
 	user, err := auth.Authenticate(r)
 	if err!=nil{
 
@@ -62,7 +62,7 @@ func classMainPageAPIView(w http.ResponseWriter, r *http.Request){
 	// CORS Headers assignment must be executed before Method checking
 
 
-	EnableCORSALL(&w)
+	EnableCORSALL(&w, mode)
 
 	if r.Method == "GET"{
 

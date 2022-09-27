@@ -11,6 +11,11 @@ import (
 )
 
 
+// Set mode=1 for local development,
+// Set mode=2 for Heroku
+var mode = 2
+
+
 
 var APIEP = map[string]string{
 
@@ -25,6 +30,8 @@ var APIEP = map[string]string{
 }
 
 
+
+
 func testingFunc(w http.ResponseWriter, r *http.Request){
 
 	json.NewEncoder(w).Encode(
@@ -36,7 +43,7 @@ func testingFunc(w http.ResponseWriter, r *http.Request){
 
 
 func GetEndpoints(w http.ResponseWriter, r *http.Request){
-	EnableCORSALL(&w)
+	EnableCORSALL(&w, mode)
 	_, err := auth.Authenticate(r)
 	if err!=nil{
 
@@ -72,12 +79,19 @@ func RunServerFunc(){
 	r.HandleFunc("/", testingFunc)
 
 
-	/// This is used for Heroku deployment
-	herokuPort := os.Getenv("PORT")
-	http.ListenAndServe(":"+herokuPort, r)
 
-	//// This is used for localserver
-	//http.ListenAndServe(":8080", r)
+
+	if mode==1{
+		// This is used for localserver
+		http.ListenAndServe(":8080", r)
+	}else{
+		// This is used for Heroku deployment
+		herokuPort := os.Getenv("PORT")
+		http.ListenAndServe(":"+herokuPort, r)
+	}
+
+
+
 
 }
 

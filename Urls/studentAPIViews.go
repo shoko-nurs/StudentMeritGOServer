@@ -14,7 +14,7 @@ import (
 
 
 func studentsManager(w http.ResponseWriter, r*http.Request) {
-	EnableCORSALL(&w)
+	EnableCORSALL(&w, mode)
 	user, err := auth.Authenticate(r)
 	if err != nil {
 		json.NewEncoder(w).Encode(
