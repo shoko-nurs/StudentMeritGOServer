@@ -1,0 +1,42 @@
+create or replace function deleteRecord(in request_user_id int,
+									    in record_id int,
+									   out status int)
+									   
+-- Declared status codes
+--  - 10 : success
+--  - 11 : Access Denied
+
+language plpgsql
+as
+$$
+
+declare
+	studentID int;
+	recordOwner int;
+	pointsVal int;
+	scoreID int;
+begin
+--      Find owner ID from db
+		select to_student,from_user,score_type 
+		into studentID, recordOwner, scoreID from record where id=record_id;
+		
+-- 		Check if the request user is the owner or superuser
+		if recordOwner!=request_user_id and recordOwner!= 1 then
+			status = 11;
+			return;
+		end if;
+		
+		
+-- 		Get the number of points
+		select points into pointsVal from score where id=scoreID;
+		
+-- 		Delete record from DB
+		delete from record where id=record_id;
+		
+-- 		Update student total score
+		update student set current_score=current_score-pointsVal where id=studentID;
+		status=10;
+		return;
+
+end;
+$$

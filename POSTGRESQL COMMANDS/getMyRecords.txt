@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.getmyrecords(
 	request_user_id integer)
-    RETURNS TABLE(studentnameout character varying, studentsurnameout character varying, studentclassout character varying, activityout character varying, pointsout integer, dateout timestamp with time zone) 
+    RETURNS TABLE(studentIDout int, studentnameout character varying, studentsurnameout character varying, studentclassout character varying, activityout character varying, pointsout integer, dateout timestamp with time zone) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE
@@ -30,6 +30,7 @@ begin
 		studentNameOut:=studentName;
 		studentSurnameOut:=studentSurname;
 		studentClassOut:=studentClass;
+		studentIdout:= row.to_student;
 		
 		select "action", points into activity, pnts from score where id=row.score_type;
 		activityOut:=activity;

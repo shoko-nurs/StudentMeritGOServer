@@ -67,6 +67,9 @@ func RunServerFunc(){
 	r.HandleFunc(APIEP["manage_students"], studentsManager)
 	r.HandleFunc(APIEP["manage_students"]+"/{id:[0-9]+}", studentsManager)
 	r.HandleFunc(APIEP["manage_records"], recordManager)
+
+	r.HandleFunc(APIEP["manage_records"]+"/{id:[0-9]+}", recordManager)
+
 	r.HandleFunc(APIEP["student_records"]+"/{id:[0-9]+}", getRecordsForStudent)
 	r.HandleFunc("/", testingFunc)
 	http.ListenAndServe(":8080", r)

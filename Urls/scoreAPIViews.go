@@ -76,6 +76,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 
 		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
 
+
 		var result int
 		row.Scan(&result)
 

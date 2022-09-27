@@ -86,6 +86,7 @@ func classMainPageAPIView(w http.ResponseWriter, r *http.Request){
 			json.NewEncoder(w).Encode(err)
 			return
 		}
+		defer rows.Close()
 
 		var Classes []Structures.Class
 

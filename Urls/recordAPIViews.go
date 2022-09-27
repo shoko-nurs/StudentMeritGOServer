@@ -45,6 +45,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 
 
 	_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+
 	if err!=nil{
 		json.NewEncoder(w).Encode(
 			map[string]interface{}{
@@ -74,11 +75,20 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 				})
 			return
 		}
+		defer table.Close()
 
 		var myRecords []Structures.MyRecords
 		for table.Next(){
 			var rc Structures.MyRecords
-			table.Scan(&rc.StdName,&rc.StdSurname,&rc.StdClass,&rc.Action,&rc.Points,&rc.DateScoreAdded)
+			table.Scan(
+				&rc.Id,
+				&rc.StdId,
+				&rc.StdName,
+				&rc.StdSurname,
+				&rc.StdClass,
+				&rc.Action,
+				&rc.Points,
+				&rc.DateScoreAdded)
 			rc.Formatted = rc.DateScoreAdded.Format(" 02-Jan-2006, 15:04")
 			myRecords=append(myRecords,rc)
 
@@ -92,6 +102,35 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 
 	}
 
+	if r.Method == "DELETE"{
+
+		record_id:=mux.Vars(r)["id"]
+
+		qStr := fmt.Sprintf(`SELECT deleteRecord(%v,%v)`, user,record_id)
+
+		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+
+		var result byte
+		err:=row.Scan(&result)
+
+		var message string
+		var status int
+
+		if result == 10{
+			message="OK"
+			status=200
+		}else{
+			message=err.Error()
+			status=400
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"message":message,
+				"status":status,
+			})
+
+	}
 }
 
 
@@ -118,6 +157,7 @@ func getRecordsForStudent(w http.ResponseWriter, r*http.Request){
 					"message":err.Error(),
 				})
 		}
+		defer rows.Close()
 
 		var Records []Structures.RecordsForStudent
 

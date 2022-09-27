@@ -38,6 +38,8 @@ func(R *Record) Validate(r *http.Request) error{
 type MyRecords struct{
 
 	// This part will be used for GET request
+	Id uint64					`json:"id,omitempty"`
+	StdId uint64				`json:"student_id,omitempty"`
 	StdName string				`json:"student_name,omitempty"`
 	StdSurname string			`json:"student_surname,omitempty"`
 	StdClass string				`json:"student_class,omitempty"`
