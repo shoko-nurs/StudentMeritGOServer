@@ -1,0 +1,45 @@
+-- FUNCTION: public.getmyrecords(integer)
+
+-- DROP FUNCTION IF EXISTS public.getmyrecords(integer);
+
+CREATE OR REPLACE FUNCTION public.getmyrecords(
+	request_user_id integer)
+    RETURNS TABLE(studentnameout character varying, studentsurnameout character varying, studentclassout character varying, activityout character varying, pointsout integer, dateout timestamp with time zone) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+
+declare
+	row record;
+	
+	studentName varchar;
+	studentSurname varchar;
+	studentClass varchar;
+	activity varchar;
+	pnts int;
+begin
+	
+	FOR row IN( select to_student,score_type,record.date from record where from_user=request_user_id)
+	
+	LOOP
+		
+		select "name", surname,class_name into studentName, studentSurname,studentClass from student where id=row.to_student;
+		studentNameOut:=studentName;
+		studentSurnameOut:=studentSurname;
+		studentClassOut:=studentClass;
+		
+		select "action", points into activity, pnts from score where id=row.score_type;
+		activityOut:=activity;
+		pointsOut:=pnts;
+		dateOut:=row.date;
+		return next;
+	END LOOP;
+	
+end;
+$BODY$;
+
+ALTER FUNCTION public.getmyrecords(integer)
+    OWNER TO iribplaryfjgwo;

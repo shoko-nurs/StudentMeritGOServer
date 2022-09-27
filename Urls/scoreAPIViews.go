@@ -24,9 +24,13 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 			})
 		return
 	}
-
+	var qStr string
 	if r.Method == "GET"{
-		qStr := fmt.Sprintf(`SELECT id,action, points,user_added from score ORDER BY date_added ASC`)
+
+
+
+
+		qStr = fmt.Sprintf(`SELECT id,action, points,user_added from score ORDER BY date_added ASC`)
 
 		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
 		if err!=nil{
@@ -59,7 +63,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 		json.NewDecoder(r.Body).Decode(&ns)
 		err = ns.Validate(r)
 
-		fmt.Println(ns)
+
 		if err != nil{
 			json.NewEncoder(w).Encode(
 				map[string]string{
@@ -68,7 +72,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 			return
 		}
 
-		qStr := fmt.Sprintf(`SELECT addScoreType('%s',%v,%v)`, ns.Action, ns.Points, user)
+		qStr = fmt.Sprintf(`SELECT addScoreType('%s',%v,%v)`, ns.Action, ns.Points, user)
 
 		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
 
@@ -112,7 +116,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 
 
 
-		qStr := fmt.Sprintf(`UPDATE score SET action='%v', points=%v WHERE id=%v`, ns.NewAction, ns.NewPoints, ns.Id)
+		qStr = fmt.Sprintf(`UPDATE score SET action='%v', points=%v WHERE id=%v`, ns.NewAction, ns.NewPoints, ns.Id)
 
 		_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 
@@ -141,9 +145,8 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 
 		var dlt Structures.Score
 		err=json.NewDecoder(r.Body).Decode(&dlt)
-		fmt.Println(err)
-		fmt.Println(dlt)
-		qStr := fmt.Sprintf(`SELECT deleteScoreType('%v','%v')`,dlt.Id,user)
+
+		qStr = fmt.Sprintf(`SELECT deleteScoreType('%v','%v')`,dlt.Id,user)
 
 		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
 
@@ -151,7 +154,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 		err = row.Scan(&result)
 
 		if err!=nil{
-			fmt.Println(err)
+
 			json.NewEncoder(w).Encode(
 				map[string] interface{}{
 					"message":err.Error(),

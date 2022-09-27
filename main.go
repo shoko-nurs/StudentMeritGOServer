@@ -5,9 +5,9 @@ import (
 )
 
 func main() {
-	//fmt.Println(Urls.GetAllowedOrigins())
-	SetENV()
-	//fmt.Println(HerokuDB.GetHerokuDB())
+
+
+
 	Urls.RunServerFunc()
 
 

@@ -1,0 +1,27 @@
+create or replace function getRecordsForStudent(in student_id int)
+	
+	returns table( from_userOut int,
+				   actionOut varchar,
+				   pointsOut int, 
+				   timestamptzOut date)
+				   
+LANGUAGE plpgsql	
+as $$	
+declare
+	row record;
+	
+begin	
+		for row in (select r.from_user, r.score_type, r.date, s.action, s.points  
+			from record r, score s where r.score_type=s.id and r.to_student=student_id)
+		
+		loop 
+		
+			from_userOut := row.from_user;
+			actionOut := row.action;
+			pointsOut := row.points;
+			timestamptzOut:= row.date;
+			return next;
+			
+		end loop;
+end;
+$$

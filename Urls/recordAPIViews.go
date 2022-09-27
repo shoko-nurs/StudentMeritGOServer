@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -41,7 +42,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 		record.StudentId, record.ScoreId,record.UserAdded,
 		)
 
-	fmt.Println(qStr)
+
 
 	_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 	if err!=nil{
@@ -90,5 +91,52 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 			})
 
 	}
+
+}
+
+
+func getRecordsForStudent(w http.ResponseWriter, r*http.Request){
+	EnableCORSALL(&w)
+	_, err := auth.Authenticate(r)
+	if err != nil {
+		json.NewEncoder(w).Encode(
+			map[string]string{
+				"message": err.Error(),
+			})
+		return
+	}
+
+	if r.Method == "GET"{
+		id := mux.Vars(r)["id"]
+
+		qStr := fmt.Sprintf(`SELECT * FROM getrecordsforstudent(%v) `,id)
+
+		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(),qStr)
+		if err!=nil{
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message":err.Error(),
+				})
+		}
+
+		var Records []Structures.RecordsForStudent
+
+		for rows.Next(){
+			var sr Structures.RecordsForStudent
+			rows.Scan(&sr.FromUser, &sr.Action, &sr.Points, &sr.Date)
+			sr.DateFormatted = sr.Date.Format("02-Jan-2006")
+			sr.TimeFormatted = sr.Date.Format("15:04")
+
+			Records=append(Records,sr)
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+			"message":"OK",
+			"data":Records,
+		})
+		return
+	}
+
 
 }

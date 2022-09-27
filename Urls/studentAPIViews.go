@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -25,10 +26,19 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 
 	if r.Method == "GET" {
 
-		qStr := fmt.Sprintf(`SELECT * FROM student ORDER BY class_name`)
+		vars := mux.Vars(r)
+		var qStr string
+		if vars["id"]==""{
+			qStr = fmt.Sprintf(`SELECT * FROM student ORDER BY class_name`)
+		}else{
+			id:=vars["id"]
+			qStr = fmt.Sprintf(`SELECT * FROM student WHERE id=%v`,id)
+		}
+
+
 		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
 		if err != nil {
-			fmt.Println(err)
+			//fmt.Println(err)
 			json.NewEncoder(w).Encode(
 				map[string]string{
 					"message": err.Error(),
@@ -106,8 +116,6 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 	if r.Method == "DELETE"{
 		var s Structures.Student
 		json.NewDecoder(r.Body).Decode(&s)
-		fmt.Println(s.Id)
-		fmt.Println(s.UserAdded)
 
 		qStr := fmt.Sprintf(`SELECT deleteStudent(%v,%v,%v)`,s.Id,s.UserAdded,user)
 
@@ -153,7 +161,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 	if r.Method == "PUT"{
 		var uS Structures.Student
 		json.NewDecoder(r.Body).Decode(&uS)
-		fmt.Println(uS)
+
 		err = uS.Validate(r)
 		if err!=nil{
 			json.NewEncoder(w).Encode(
@@ -165,7 +173,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 
 		qStr := fmt.Sprintf(`UPDATE student SET name='%s', surname='%s',class_id=%v, class_name='%s' where id=%v`,
 			uS.Name, uS.Surname, uS.ClassId,uS.ClassName, uS.Id )
-		fmt.Println(qStr)
+		
 		_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 		if err!=nil{
 			json.NewEncoder(w).Encode(

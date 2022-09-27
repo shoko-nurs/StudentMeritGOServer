@@ -46,3 +46,13 @@ type MyRecords struct{
 	DateScoreAdded time.Time	`json:"date_added,omitempty"`
 	Formatted string          `json:"formatted,omitempty"`
 }
+
+type RecordsForStudent struct{
+	Id uint64           	`json:"id,omitempty"`
+	Action string			`json:"action"`
+	Points int64			`json:"points"`
+	FromUser uint64			`json:"from_user"`
+	Date time.Time			`json:"date"`
+	DateFormatted string    `json:"date_formatted,omitempty"`
+	TimeFormatted string 	`json:"time_formatted,omitempty"`
+}
