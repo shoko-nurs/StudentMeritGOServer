@@ -1,11 +1,8 @@
 package Urls
 
 import (
-	"StudentMerit/HerokuDB"
 	"StudentMerit/auth"
-	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 	//"net/url"
@@ -27,12 +24,11 @@ var APIEP = map[string]string{
 
 
 func testingFunc(w http.ResponseWriter, r *http.Request){
-	qStr := fmt.Sprintf(`SELECT addClass('10b',1)`)
-	row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
 
-	var x []interface{}
-	row.Scan(&x)
-	fmt.Println(x)
+	json.NewEncoder(w).Encode(
+		map[string]string{
+			"Message":"Ok",
+		})
 
 }
 
@@ -72,6 +68,7 @@ func RunServerFunc(){
 
 	r.HandleFunc(APIEP["student_records"]+"/{id:[0-9]+}", getRecordsForStudent)
 	r.HandleFunc("/", testingFunc)
+
 	http.ListenAndServe(":8080", r)
 
 }
