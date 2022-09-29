@@ -13,7 +13,7 @@ import (
 
 // Set mode=1 for local development,
 // Set mode=2 for Heroku
-var mode = 2
+var mode = 1
 
 
 
@@ -43,7 +43,7 @@ func testingFunc(w http.ResponseWriter, r *http.Request){
 
 
 func GetEndpoints(w http.ResponseWriter, r *http.Request){
-	EnableCORSALL(&w, mode)
+	EnableCORSALL(&w, r)
 	_, err := auth.Authenticate(r)
 	if err!=nil{
 

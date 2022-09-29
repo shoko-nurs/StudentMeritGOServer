@@ -13,11 +13,15 @@ func EnableCORSGET(w *http.ResponseWriter){
 
 }
 
-func EnableCORSALL(w *http.ResponseWriter,mode int){
-	if mode==1{
+func EnableCORSALL(w *http.ResponseWriter, r *http.Request){
+
+	host_type :=r.Header["Host_type"][0]
+
+	if host_type=="1"{
 		(*w).Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:8000")
 	}else{
 		(*w).Header().Set("Access-Control-Allow-Origin", "https://shokonurs-random-apps.herokuapp.com")
+
 	}
 
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, PATCH")

@@ -12,7 +12,7 @@ import (
 )
 
 func recordManager(w http.ResponseWriter, r *http.Request){
-	EnableCORSALL(&w, mode)
+	EnableCORSALL(&w, r)
 	user, err := auth.Authenticate(r)
 	if err != nil {
 		json.NewEncoder(w).Encode(
@@ -135,7 +135,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 
 
 func getRecordsForStudent(w http.ResponseWriter, r*http.Request){
-	EnableCORSALL(&w, mode)
+	EnableCORSALL(&w, r)
 	_, err := auth.Authenticate(r)
 	if err != nil {
 		json.NewEncoder(w).Encode(
