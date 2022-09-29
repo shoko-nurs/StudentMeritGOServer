@@ -13,12 +13,12 @@ import (
 
 // Set mode=1 for local development,
 // Set mode=2 for Heroku
-var mode = 1
+var mode = 2
 
 
 
 var APIEP = map[string]string{
-
+	"test"            : "123",
 	"host"            : "https://shokonurs-student-merit.herokuapp.com",
 	"manage_classes"  : "/api/manage_classes",
 	"get_endpoints"   : "/api/get_endpoints",
