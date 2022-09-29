@@ -14,6 +14,7 @@ import (
 func recordManager(w http.ResponseWriter, r *http.Request){
 	EnableCORSALL(&w, r)
 	user, err := auth.Authenticate(r)
+
 	if err != nil {
 		json.NewEncoder(w).Encode(
 			map[string]string{
@@ -64,6 +65,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 }
 
 	if r.Method=="GET"{
+
 		qStr := fmt.Sprintf(`SELECT * FROM getMyRecords(%v)`, user)
 
 		table, err:= HerokuDB.HEROKU_DB.Query(context.Background(), qStr)

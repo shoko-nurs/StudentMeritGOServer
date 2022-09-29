@@ -28,8 +28,6 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 	if r.Method == "GET"{
 
 
-
-
 		qStr = fmt.Sprintf(`SELECT id,action, points,user_added from score ORDER BY date_added ASC`)
 
 		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)

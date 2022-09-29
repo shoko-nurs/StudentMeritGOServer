@@ -36,7 +36,7 @@ func testingFunc(w http.ResponseWriter, r *http.Request){
 
 	json.NewEncoder(w).Encode(
 		map[string]string{
-			"Message":"Ok",
+			"Message":"123132312312",
 		})
 
 }
