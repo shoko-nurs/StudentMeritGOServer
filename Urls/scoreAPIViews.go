@@ -13,6 +13,7 @@ import (
 
 
 func scoresManager(w http.ResponseWriter, r*http.Request){
+
 	EnableCORSALL(&w, r)
 	user, err := auth.Authenticate(r)
 	if err!=nil{

@@ -3,6 +3,7 @@ package Urls
 import (
 	"StudentMerit/auth"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 	"os"
@@ -13,13 +14,12 @@ import (
 
 // Set mode=1 for local development,
 // Set mode=2 for Heroku
-var mode = 2
+var mode = 1
 
 
 
 var APIEP = map[string]string{
 	"test"            : "123",
-	"host"            : "https://shokonurs-student-merit.herokuapp.com",
 	"manage_classes"  : "/api/manage_classes",
 	"get_endpoints"   : "/api/get_endpoints",
 	"manage_scores"   : "/api/manage_scores",
@@ -29,7 +29,15 @@ var APIEP = map[string]string{
 
 }
 
+func GetAPIEP() {
 
+	if mode == 1{
+		APIEP["host"] = "http://localhost:8080"
+	}else{
+		APIEP["host"] = "https://shokonurs-student-merit.herokuapp.com"
+	}
+
+}
 
 
 func testingFunc(w http.ResponseWriter, r *http.Request){
@@ -43,6 +51,7 @@ func testingFunc(w http.ResponseWriter, r *http.Request){
 
 
 func GetEndpoints(w http.ResponseWriter, r *http.Request){
+
 	EnableCORSALL(&w, r)
 	_, err := auth.Authenticate(r)
 	if err!=nil{
@@ -54,9 +63,12 @@ func GetEndpoints(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
+
+
 	rp := map[string] interface{}{
 		"ep":APIEP,
 	}
+	fmt.Println(APIEP)
 
 	json.NewEncoder(w).Encode(rp)
 
