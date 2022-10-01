@@ -14,7 +14,7 @@ import (
 
 // Set mode=1 for local development,
 // Set mode=2 for Heroku
-var mode = 1
+var mode = 2
 
 
 
