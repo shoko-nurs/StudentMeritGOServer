@@ -2,7 +2,6 @@ package auth
 
 import (
 	"StudentMerit/Structures"
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
 	"os"
@@ -10,7 +9,7 @@ import (
 )
 
 func Authenticate(r *http.Request) (uint64,error){
-	fmt.Println("AUTHENTICATING")
+
 	var err = Structures.ERROR{Err:"Access Denied"}
 	bearer := r.Header.Get("Authorization")
 

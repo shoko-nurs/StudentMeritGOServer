@@ -3,7 +3,8 @@ package Urls
 import (
 	"StudentMerit/auth"
 	"encoding/json"
-	"fmt"
+
+
 	"github.com/gorilla/mux"
 	"net/http"
 	"os"
@@ -53,6 +54,7 @@ func testingFunc(w http.ResponseWriter, r *http.Request){
 func GetEndpoints(w http.ResponseWriter, r *http.Request){
 
 	EnableCORSALL(&w, r)
+
 	_, err := auth.Authenticate(r)
 	if err!=nil{
 
@@ -68,7 +70,6 @@ func GetEndpoints(w http.ResponseWriter, r *http.Request){
 	rp := map[string] interface{}{
 		"ep":APIEP,
 	}
-	fmt.Println(APIEP)
 
 	json.NewEncoder(w).Encode(rp)
 

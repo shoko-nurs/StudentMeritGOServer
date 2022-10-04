@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
+	"time"
 )
 
 func recordManager(w http.ResponseWriter, r *http.Request){
@@ -38,6 +39,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 			})
 		return
 	}
+
 
 	qStr := fmt.Sprintf(`select addRecord(%v,%v,%v)`,
 		record.StudentId, record.ScoreId,record.UserAdded,
@@ -79,6 +81,8 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 		}
 		defer table.Close()
 
+		_, offset := time.Now().Zone()
+
 		var myRecords []Structures.MyRecords
 		for table.Next(){
 			var rc Structures.MyRecords
@@ -91,10 +95,14 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 				&rc.Action,
 				&rc.Points,
 				&rc.DateScoreAdded)
+			rc.DateScoreAdded.Add(time.Second*time.Duration(offset))
 			rc.Formatted = rc.DateScoreAdded.Format(" 02-Jan-2006, 15:04")
 			myRecords=append(myRecords,rc)
 
 		}
+
+
+
 
 		json.NewEncoder(w).Encode(
 			map[string]interface{}{
