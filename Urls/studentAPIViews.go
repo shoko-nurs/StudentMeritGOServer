@@ -50,6 +50,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 		for rows.Next() {
 			var s Structures.Student
 			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.CurrentScore, &s.ClassName, &s.UserAdded)
+			fmt.Println(s)
 			allStudents = append(allStudents, s)
 		}
 

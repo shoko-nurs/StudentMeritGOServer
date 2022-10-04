@@ -13,7 +13,7 @@ type Student struct {
 	Surname string		`json:"surname,omitempty"`
 	ClassId uint64		`json:"class_id,omitempty"`
 	ClassName string	`json:"class_name,omitempty"`
-	CurrentScore int64	`json:"current_score,omitempty"`
+	CurrentScore int64	`json:"current_score"`
 	UserAdded uint64    `json:"user_added"`
 
 	//NewName string		`json:"new_name,omitempty"`

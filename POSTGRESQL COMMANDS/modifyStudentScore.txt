@@ -1,0 +1,23 @@
+
+-- After deletion of the score type, it is important 
+-- to modify scores of the students which received that 
+-- score.
+create or replace procedure modifyStudentScore(in score_id int)
+language plpgsql
+as $$
+
+declare
+	pointsSQL int;
+	row record;
+	
+begin
+	select points into pointsSQL from score where id=score_id;
+	for row in(select * from record where score_type=score_id)
+	
+		loop
+			update student set current_score=current_score-pointsSQL where id=row.to_student;
+		end loop;
+
+
+end;
+$$
