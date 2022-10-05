@@ -197,6 +197,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 }
 
 
+
 func classStudents(w http.ResponseWriter, r *http.Request){
 	EnableCORSALL(&w, r)
 	_, err := auth.Authenticate(r)
@@ -211,7 +212,7 @@ func classStudents(w http.ResponseWriter, r *http.Request){
 	if r.Method == "GET"{
 		class_id := mux.Vars(r)["id"]
 
-		qStr := fmt.Sprintf(`SELECT * FROM STUDENT WHERE class_id=%v`,class_id)
+		qStr := fmt.Sprintf(`SELECT * FROM STUDENT WHERE class_id=%v ORDER BY current_score DESC`,class_id)
 
 		rows, err:= HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
 		if err!=nil{
