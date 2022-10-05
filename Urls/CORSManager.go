@@ -1,7 +1,6 @@
 package Urls
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -20,7 +19,7 @@ func EnableCORSALL(w *http.ResponseWriter, r *http.Request){
 	}else{
 		(*w).Header().Set("Access-Control-Allow-Origin", "https://shokonurs-random-apps.herokuapp.com")
 	}
-	fmt.Println((*w).Header())
+
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, PATCH")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization,HOST")
 

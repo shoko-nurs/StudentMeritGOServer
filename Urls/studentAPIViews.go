@@ -195,3 +195,47 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 
 	}
 }
+
+
+func classStudents(w http.ResponseWriter, r *http.Request){
+	EnableCORSALL(&w, r)
+	_, err := auth.Authenticate(r)
+	if err != nil {
+		json.NewEncoder(w).Encode(
+			map[string]string{
+				"message": err.Error(),
+			})
+		return
+	}
+
+	if r.Method == "GET"{
+		class_id := mux.Vars(r)["id"]
+
+		qStr := fmt.Sprintf(`SELECT * FROM STUDENT WHERE class_id=%v`,class_id)
+
+		rows, err:= HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		if err!=nil{
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message":err.Error(),
+				})
+			return
+		}
+
+		var classStudents []Structures.Student
+		for rows.Next(){
+			var s Structures.Student
+			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.CurrentScore, &s.ClassName, &s.UserAdded)
+			classStudents = append(classStudents,s)
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"students": classStudents,
+				"ep":       APIEP,
+			})
+
+	}
+
+
+}
