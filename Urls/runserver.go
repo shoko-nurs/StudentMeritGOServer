@@ -28,6 +28,7 @@ var APIEP = map[string]string{
 	"manage_records"  : "/api/manage_records",
 	"student_records" : "/api/student_records",
 	"class_students"  : "/api/class_students",
+	"top_students"	  : "/api/top_students",
 }
 
 func GetAPIEP() {
@@ -85,6 +86,8 @@ func RunServerFunc(){
 	r.HandleFunc(APIEP["manage_students"], studentsManager)
 	r.HandleFunc(APIEP["manage_students"]+"/{id:[0-9]+}", studentsManager)
 	r.HandleFunc(APIEP["class_students"]+"/{id:[0-9]+}", classStudents)
+	r.HandleFunc(APIEP["top_students"], getTopStudents)
+
 	r.HandleFunc(APIEP["manage_records"], recordManager)
 
 	r.HandleFunc(APIEP["manage_records"]+"/{id:[0-9]+}", recordManager)

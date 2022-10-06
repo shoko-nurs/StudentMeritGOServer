@@ -240,3 +240,44 @@ func classStudents(w http.ResponseWriter, r *http.Request){
 
 
 }
+
+func getTopStudents(w http.ResponseWriter, r *http.Request){
+	EnableCORSALL(&w, r)
+	_, err := auth.Authenticate(r)
+	if err != nil {
+		json.NewEncoder(w).Encode(
+			map[string]string{
+				"message": err.Error(),
+			})
+		return
+	}
+
+	if r.Method=="GET"{
+
+		qStr := fmt.Sprintf(`SELECT * FROM student ORDER BY current_score DESC LIMIT 5`)
+
+		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		if err!=nil{
+			json.NewEncoder(w).Encode(
+				map[string]string{
+					"message":err.Error(),
+				})
+
+		}
+
+		var TopStudents []Structures.Student
+		for rows.Next(){
+			var s Structures.Student
+			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.CurrentScore, &s.ClassName, &s.UserAdded)
+			TopStudents = append(TopStudents,s)
+		}
+
+		json.NewEncoder(w).Encode(
+			map[string]interface{}{
+				"students": TopStudents,
+				"ep":       APIEP,
+			})
+
+
+	}
+}
