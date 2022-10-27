@@ -1,6 +1,7 @@
 package Urls
 
 import (
+	"StudentMerit/BotTest"
 	"StudentMerit/auth"
 	"encoding/json"
 
@@ -95,7 +96,7 @@ func RunServerFunc(){
 	r.HandleFunc(APIEP["student_records"]+"/{id:[0-9]+}", getRecordsForStudent)
 	r.HandleFunc("/", testingFunc)
 
-
+	r.HandleFunc("/telegram_bot",BotTest.TelegramBotTest )
 
 
 	if mode==1{
