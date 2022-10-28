@@ -24,15 +24,15 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 	var update Update
 	json.NewDecoder(r.Body).Decode(&update)
 
-	//text := update.Message.Text
-	//userName := update.Message.From.Username
-	//chatId := update.Message.Chat.Id
+	text := update.Message.Text
+	userName := update.Message.From.Username
+	chatId := update.Message.Chat.Id
 
-	//toSend := userName+" "+text
-	//usr := "user"
-	//qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id) VALUES(%v)`,chatId)
-	qStr1 := `INSERT INTO telegram (chat_id) VALUES (123456)`
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr1)
+	toSend := userName+" "+text
+	usr := "user"
+	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, text, type) VALUES(%v, %v,%v)`,chatId,toSend, usr)
+	//qStr1 := `INSERT INTO telegram (chat_id) VALUES (123456)`
+	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 	//SendTextToTelegram(chatId, toSend)
 	//testingTelegram(chatId, toSend)
 
