@@ -20,6 +20,7 @@ var Actions = map[string]interface{}{
 
 func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 
+
 	var update Update
 	json.NewDecoder(r.Body).Decode(&update)
 	text := update.Message.Text
@@ -28,11 +29,13 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 
 	toSend := userName+" "+text
 	SendTextToTelegram(chatId, toSend)
+
+
 }
 
 
 func SendTextToTelegram(chat_id int64, text string) (string, error){
-	telegramAPI := "https://api.telegram.org/bot"+os.Getenv("bot_token")
+	telegramAPI := "https://api.telegram.org/bot"+os.Getenv("bot_token")+"/"+"sendMessage"
 	response,err := http.PostForm(
 		telegramAPI,
 		url.Values{
