@@ -29,11 +29,11 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 	chatId := update.Message.Chat.Id
 
 	toSend := userName+" "+text
-	usr := "user"
-	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, text, type) VALUES(%v,%v, %v)`,chatId, text, usr)
+	//usr := "user"
+	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, text) VALUES(%v,%v)`,chatId, toSend)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 	//SendTextToTelegram(chatId, toSend)
-	testingTelegram(chatId, toSend)
+	//testingTelegram(chatId, toSend)
 
 }
 
@@ -50,13 +50,13 @@ func testingTelegram(chat_id int64, text string){
 
 	req, _ := http.NewRequest("POST", telegramAPI, bodyReader)
 
-	hc := http.Client{}
+	//hc := http.Client{}
 	req.Header.Add("Content-Type", "application/json")
 
-	response, _ := hc.Do(req)
+	//response, _ := hc.Do(req)
 
-	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, username) values(%v, %v)`,response.StatusCode, response.Status)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+	//qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, username) values(%v, %v)`,response.StatusCode, response.Status)
+	//HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 
 	qStr1 := fmt.Sprintf(`INSERT INTO telegram (chat_id) VALUES (%v)`,chat_id)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr1)
