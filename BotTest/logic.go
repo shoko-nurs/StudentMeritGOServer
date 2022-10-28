@@ -2,12 +2,11 @@ package BotTest
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var Actions = map[string]interface{}{
@@ -34,25 +33,39 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 }
 
 
-func SendTextToTelegram(chat_id int64, text string) (string, error){
+func SendTextToTelegram(chat_id int64, text string) (string){
 	telegramAPI := "https://api.telegram.org/bot"+os.Getenv("bot_token")+"/"+"sendMessage"
-	response,err := http.PostForm(
-		telegramAPI,
-		url.Values{
-			"chat_id": {strconv.FormatInt(chat_id,10)},
-			"text": {text},
 
-		})
+	sendBody := url.Values{
+		"chat_id": {strconv.FormatInt(chat_id,10)},
+		"text": {text},
 
-	if err!=nil{
-		log.Printf("error when posting")
-		return "", err
 	}
+	req, _ := http.NewRequest("POST", telegramAPI, strings.NewReader(sendBody.Encode()))
 
-	defer response.Body.Close()
+	hc := http.Client{}
+	req.Header.Add("Content-Type", "application/json")
 
-	var bodyBytes,_ = ioutil.ReadAll(response.Body)
-	bodyString := string(bodyBytes)
-	log.Printf("%s", bodyString)
-	return bodyString, nil
+	hc.Do(req)
+	return "Success"
+
+	//response,err := http.PostForm(
+	//	telegramAPI,
+	//	url.Values{
+	//		"chat_id": {strconv.FormatInt(chat_id,10)},
+	//		"text": {text},
+	//
+	//	})
+	//
+	//if err!=nil{
+	//	log.Printf("error when posting")
+	//	return "", err
+	//}
+	//
+	//defer response.Body.Close()
+	//
+	//var bodyBytes,_ = ioutil.ReadAll(response.Body)
+	//bodyString := string(bodyBytes)
+	//log.Printf("%s", bodyString)
+	//return bodyString, nil
 }
