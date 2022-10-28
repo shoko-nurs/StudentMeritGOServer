@@ -24,8 +24,8 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 	var update Update
 	json.NewDecoder(r.Body).Decode(&update)
 
-	text := update.Message.Text
-	userName := update.Message.From.Username
+	//text := update.Message.Text
+	//userName := update.Message.From.Username
 	chatId := update.Message.Chat.Id
 
 	//toSend := userName+" "+text
