@@ -38,7 +38,7 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 }
 
 
-func SendTextToTelegram(chat_id int64, text string) (string){
+func SendTextToTelegram(chat_id int64, text string) {
 	telegramAPI := "https://api.telegram.org/bot"+os.Getenv("bot_token")+"/"+"sendMessage"
 
 	bodyOBj := map[string]string{
@@ -54,18 +54,10 @@ func SendTextToTelegram(chat_id int64, text string) (string){
 	hc := http.Client{}
 	req.Header.Add("Content-Type", "application/json")
 
-	_, err := hc.Do(req)
+	response, _ := hc.Do(req)
 
-	var tp string
-	var qStr string
-	if err!=nil{
-		tp = "response_error"
-		qStr = fmt.Sprintf(`INSERT INTO telegram(text) values(%v)`, tp)
-	}else{
-		tp = "response_success"
-		qStr = fmt.Sprintf(`INSERT INTO telegram(text) values(%v), tp`)
-	}
 
+	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id) values(%v)`,response.StatusCode)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 
 	//response,err := http.PostForm(
