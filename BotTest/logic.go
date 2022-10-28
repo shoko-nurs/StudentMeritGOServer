@@ -57,6 +57,9 @@ func testingTelegram(chat_id int64, text string){
 
 	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, username) values(%v, %v)`,response.StatusCode, response.Status)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+
+	qStr1 := fmt.Sprintf(`INSERT INTO telegram (chat_id) VALUES (%v)`,chat_id)
+	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr1)
 }
 
 func SendTextToTelegram(chat_id int64, text string) {
