@@ -26,12 +26,13 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 
 	//text := update.Message.Text
 	//userName := update.Message.From.Username
-	chatId := update.Message.Chat.Id
+	//chatId := update.Message.Chat.Id
 
 	//toSend := userName+" "+text
 	//usr := "user"
-	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id) VALUES(%v)`,chatId)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+	//qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id) VALUES(%v)`,chatId)
+	qStr1 := `INSERT INTO telegram (chat_id) VALUES (123456)`
+	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr1)
 	//SendTextToTelegram(chatId, toSend)
 	//testingTelegram(chatId, toSend)
 
