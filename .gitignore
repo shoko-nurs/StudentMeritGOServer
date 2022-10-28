@@ -1,3 +1,5 @@
+.gitignore
 gitignore.go
 StudentMerit.exe
-BotTest/ignoreTest.txt
+BotTest/bot_endpoints_ignore.txt
+BotTest/setEnv.go
