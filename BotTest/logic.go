@@ -54,8 +54,19 @@ func SendTextToTelegram(chat_id int64, text string) (string){
 	hc := http.Client{}
 	req.Header.Add("Content-Type", "application/json")
 
-	hc.Do(req)
-	return "Success"
+	_, err := hc.Do(req)
+
+	var tp string
+	var qStr string
+	if err!=nil{
+		tp = "response_error"
+		qStr = fmt.Sprintf(`INSERT INTO telegram(text) values(%v)`, tp)
+	}else{
+		tp = "response_success"
+		qStr = fmt.Sprintf(`INSERT INTO telegram(text) values(%v), tp`)
+	}
+
+	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 
 	//response,err := http.PostForm(
 	//	telegramAPI,
