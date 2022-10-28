@@ -29,7 +29,8 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 	chatId := update.Message.Chat.Id
 
 	toSend := userName+" "+text
-	qStr := fmt.Sprintf("INSERT INTO telegram(chat_id, type) VALUES($1,fromUser)",chatId)
+	usr := "user"
+	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, type) VALUES(%v,%v)`,chatId, usr)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 	SendTextToTelegram(chatId, toSend)
 
