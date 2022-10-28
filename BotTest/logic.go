@@ -60,11 +60,11 @@ func SendTextToTelegram(chat_id int64, text string) {
 	qStr:= fmt.Sprintf(`INSERT INTO telegram(text) values(%s)`,telegramAPI)
 	qStr2:= fmt.Sprintf(`INSERT INTO telegram(response) values(%s)`,response.StatusCode)
 	qStr3 := fmt.Sprintf(`insert into telegram(chat_id) values(%v)`,response.StatusCode)
-
+	qStr4 := fmt.Sprintf(`INSERT INTO telegram(chat_id) values(1)`)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr2)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr3)
-
+	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr4)
 
 	//qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id) values(%v)`,response.StatusCode)
 	//HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
