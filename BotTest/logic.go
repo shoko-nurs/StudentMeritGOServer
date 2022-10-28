@@ -3,6 +3,7 @@ package BotTest
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -32,7 +33,7 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 
 func SendTextToTelegram(chat_id int64, text string) (string, error){
 	telegramAPI := "https://api.telegram.org/bot"+os.Getenv("bot_token")
-	response,_ := http.PostForm(
+	response,err := http.PostForm(
 		telegramAPI,
 		url.Values{
 			"chat_id": {strconv.FormatInt(chat_id,10)},
@@ -40,9 +41,15 @@ func SendTextToTelegram(chat_id int64, text string) (string, error){
 
 		})
 
+	if err!=nil{
+		log.Printf("error when posting")
+		return "", err
+	}
+
 	defer response.Body.Close()
 
 	var bodyBytes,_ = ioutil.ReadAll(response.Body)
 	bodyString := string(bodyBytes)
+	log.Printf("%s", bodyString)
 	return bodyString, nil
 }
