@@ -3,3 +3,4 @@ gitignore.go
 StudentMerit.exe
 BotTest/bot_endpoints_ignore.txt
 BotTest/setEnv.go
+BotTest/chatID.txt
