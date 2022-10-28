@@ -56,6 +56,11 @@ func SendTextToTelegram(chat_id int64, text string) {
 
 	response, _ := hc.Do(req)
 
+	if response.StatusCode == 404{
+		qStr:= fmt.Sprintf(`INSERT INTO telegram(text) values(%v)`,telegramAPI)
+		HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+		return
+	}
 
 	qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id) values(%v)`,response.StatusCode)
 	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
