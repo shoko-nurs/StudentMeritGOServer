@@ -39,7 +39,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	fmt.Println("Comment is ",record.Comment)
+
 	qStr := fmt.Sprintf(`call addRecord(%v,%v,%v,'%v')`,
 		record.StudentId, record.ScoreId, record.UserAdded, record.Comment,
 		)

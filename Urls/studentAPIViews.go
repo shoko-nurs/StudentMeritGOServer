@@ -38,7 +38,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 
 		rows, err := AWSDB.AWSDB.Query(context.Background(), qStr)
 		if err != nil {
-			//fmt.Println(err)
+
 			json.NewEncoder(w).Encode(
 				map[string]string{
 					"message": err.Error(),
@@ -74,7 +74,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 		ns.CurrentScore = 100
 		err= ns.Validate(r)
 
-		fmt.Println(ns)
+
 
 		if err!=nil{
 			json.NewEncoder(w).Encode(
@@ -87,10 +87,10 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 		qStr := fmt.Sprintf(`select addNewStudent( '%v', '%v', %v, '%v',%v)`,
 			ns.Name, ns.Surname, ns.ClassId, ns.ClassName, ns.UserAdded)
 
-		fmt.Println(qStr)
+
 		row := AWSDB.AWSDB.QueryRow(context.Background(), qStr)
 
-		fmt.Println(err)
+
 
 		var result int
 
@@ -292,7 +292,6 @@ func getTopStudents(w http.ResponseWriter, r *http.Request){
 			TopStudents = append(TopStudents,s)
 		}
 
-		fmt.Println(TopStudents)
 
 		json.NewEncoder(w).Encode(
 			map[string]interface{}{

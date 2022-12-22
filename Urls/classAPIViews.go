@@ -170,7 +170,7 @@ func classMainPageAPIView(w http.ResponseWriter, r *http.Request){
 			status=400
 		}
 
-		fmt.Println(status)
+
 
 		json.NewEncoder(w).Encode(
 			map[string] interface{}{
@@ -273,9 +273,4 @@ func classMainPageAPIView(w http.ResponseWriter, r *http.Request){
 
 
 	}
-}
-
-func EditClass(w http.ResponseWriter, r *http.Request){
-
-
 }

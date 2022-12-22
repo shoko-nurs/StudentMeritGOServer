@@ -18,3 +18,4 @@ type ERROR struct{
 func (C ERROR) Error() string{
 	return C.Err
 }
+
