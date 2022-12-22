@@ -1,7 +1,7 @@
 package Urls
 
 import (
-	"StudentMerit/HerokuDB"
+	"StudentMerit/AWSDB"
 	"StudentMerit/Structures"
 	"StudentMerit/auth"
 	"context"
@@ -26,13 +26,15 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 		return
 	}
 	var qStr string
+
 	if r.Method == "GET"{
 
 
 		qStr = fmt.Sprintf(`SELECT id,action, points,user_added from score ORDER BY date_added ASC`)
 
-		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		rows, err := AWSDB.AWSDB.Query(context.Background(), qStr)
 		if err!=nil{
+			fmt.Println(err.Error())
 			json.NewEncoder(w).Encode(
 				map[string]string{ "error":err.Error()})
 
@@ -73,7 +75,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 
 		qStr = fmt.Sprintf(`SELECT addScoreType('%s',%v,%v)`, ns.Action, ns.Points, user)
 
-		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+		row := AWSDB.AWSDB.QueryRow(context.Background(), qStr)
 
 
 		var result int
@@ -83,10 +85,10 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 		var message string
 		var status int
 
-		if result == 0{
+		if result == 10{
 			message = fmt.Sprintf("New Score type is added")
 			status = 200
-		} else if result==1{
+		} else if result==11{
 			message = "This score is already added"
 			status=400
 		} else{
@@ -118,7 +120,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 
 		qStr = fmt.Sprintf(`UPDATE score SET action='%v', points=%v WHERE id=%v`, ns.NewAction, ns.NewPoints, ns.Id)
 
-		_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+		_, err = AWSDB.AWSDB.Exec(context.Background(), qStr)
 
 		if err!=nil{
 
@@ -148,7 +150,7 @@ func scoresManager(w http.ResponseWriter, r*http.Request){
 
 		qStr = fmt.Sprintf(`SELECT deleteScoreType('%v','%v')`,dlt.Id,user)
 
-		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+		row := AWSDB.AWSDB.QueryRow(context.Background(), qStr)
 
 		var result int32
 		err = row.Scan(&result)

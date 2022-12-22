@@ -1,0 +1,45 @@
+create or replace function addScoreType(in actionType varchar,
+									   in points int,
+									   in request_user_id int,
+									   out status int)
+-- Declared Status codes
+-- 10 : success
+-- 11 : this score type is already added
+-- 12 : you can't add more than 5 score types
+
+language plpgsql as 
+$func$
+	declare 
+	added int;
+begin
+
+	select added_scores from user_score_number_added into added
+	where user_added = request_user_id;
+	
+	if added>=5 and request_user_id!=1 then
+		status = 12;
+		return;
+	end if;
+	
+	
+	begin
+		insert into score("action",points, user_added) 
+		values(actionType,points,request_user_id);
+			status = 10;
+		exception
+			when sqlstate '23505' then
+				status=11;
+				return;
+	end;
+	
+	if added is null then
+		insert into user_score_number_added(added_scores,user_added)
+		values(1, request_user_id);
+	else
+		update user_score_number_added set added_scores=added+1
+		where user_added = request_user_id;
+	end if;
+	
+	return;
+end;
+$func$

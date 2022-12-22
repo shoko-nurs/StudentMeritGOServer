@@ -1,7 +1,7 @@
 package Urls
 
 import (
-	"StudentMerit/HerokuDB"
+	"StudentMerit/AWSDB"
 	"StudentMerit/Structures"
 	"StudentMerit/auth"
 	"context"
@@ -36,7 +36,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 		}
 
 
-		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		rows, err := AWSDB.AWSDB.Query(context.Background(), qStr)
 		if err != nil {
 			//fmt.Println(err)
 			json.NewEncoder(w).Encode(
@@ -49,8 +49,10 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 		var allStudents []Structures.Student
 		for rows.Next() {
 			var s Structures.Student
-			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.CurrentScore, &s.ClassName, &s.UserAdded)
-
+			err = rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.ClassName, &s.UserAdded, &s.CurrentScore)
+			if err!=nil{
+				fmt.Println(err.Error())
+			}
 			allStudents = append(allStudents, s)
 		}
 
@@ -59,6 +61,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 				"students": allStudents,
 				"ep":       APIEP,
 			})
+		rows.Close()
 
 	}
 
@@ -66,8 +69,13 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 		var ns Structures.Student
 		json.NewDecoder(r.Body).Decode(&ns)
 
+
 		ns.UserAdded = user
+		ns.CurrentScore = 100
 		err= ns.Validate(r)
+
+		fmt.Println(ns)
+
 		if err!=nil{
 			json.NewEncoder(w).Encode(
 				map[string]string{
@@ -76,18 +84,24 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 			return
 		}
 
-		qStr := fmt.Sprintf(`select addNewStudent('%s', '%s',%v, '%s',%v)`,
+		qStr := fmt.Sprintf(`select addNewStudent( '%v', '%v', %v, '%v',%v)`,
 			ns.Name, ns.Surname, ns.ClassId, ns.ClassName, ns.UserAdded)
 
-		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+		fmt.Println(qStr)
+		row := AWSDB.AWSDB.QueryRow(context.Background(), qStr)
+
+		fmt.Println(err)
+
 		var result int
+
 		err = row.Scan(&result)
 
 		if err!=nil{
-
+			fmt.Println(err.Error())
 			json.NewEncoder(w).Encode(
 				map[string]string{
 					"message": err.Error(),
+					"status":"No status",
 				})
 			return
 		}
@@ -120,7 +134,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 
 		qStr := fmt.Sprintf(`SELECT deleteStudent(%v,%v,%v)`,s.Id,s.UserAdded,user)
 
-		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+		row := AWSDB.AWSDB.QueryRow(context.Background(), qStr)
 
 		var result int
 		err = row.Scan(&result)
@@ -175,7 +189,7 @@ func studentsManager(w http.ResponseWriter, r*http.Request) {
 		qStr := fmt.Sprintf(`UPDATE student SET name='%s', surname='%s',class_id=%v, class_name='%s' where id=%v`,
 			uS.Name, uS.Surname, uS.ClassId,uS.ClassName, uS.Id )
 		
-		_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+		_, err = AWSDB.AWSDB.Exec(context.Background(), qStr)
 		if err!=nil{
 			json.NewEncoder(w).Encode(
 				map[string]string{
@@ -214,7 +228,7 @@ func classStudents(w http.ResponseWriter, r *http.Request){
 
 		qStr := fmt.Sprintf(`SELECT * FROM STUDENT WHERE class_id=%v ORDER BY current_score DESC`,class_id)
 
-		rows, err:= HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		rows, err:= AWSDB.AWSDB.Query(context.Background(), qStr)
 		if err!=nil{
 			json.NewEncoder(w).Encode(
 				map[string]string{
@@ -226,7 +240,7 @@ func classStudents(w http.ResponseWriter, r *http.Request){
 		var classStudents []Structures.Student
 		for rows.Next(){
 			var s Structures.Student
-			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.CurrentScore, &s.ClassName, &s.UserAdded)
+			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.ClassName, &s.UserAdded, &s.CurrentScore)
 			classStudents = append(classStudents,s)
 		}
 
@@ -256,7 +270,8 @@ func getTopStudents(w http.ResponseWriter, r *http.Request){
 
 		qStr := fmt.Sprintf(`SELECT * FROM student ORDER BY current_score DESC LIMIT 5`)
 
-		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		rows, err := AWSDB.AWSDB.Query(context.Background(), qStr)
+
 		if err!=nil{
 			json.NewEncoder(w).Encode(
 				map[string]string{
@@ -266,11 +281,18 @@ func getTopStudents(w http.ResponseWriter, r *http.Request){
 		}
 
 		var TopStudents []Structures.Student
+
 		for rows.Next(){
+
 			var s Structures.Student
-			rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId, &s.CurrentScore, &s.ClassName, &s.UserAdded)
+			err = rows.Scan(&s.Id, &s.Name, &s.Surname, &s.ClassId,  &s.ClassName, &s.UserAdded,&s.CurrentScore)
+			if err!=nil{
+				fmt.Println(err.Error())
+			}
 			TopStudents = append(TopStudents,s)
 		}
+
+		fmt.Println(TopStudents)
 
 		json.NewEncoder(w).Encode(
 			map[string]interface{}{

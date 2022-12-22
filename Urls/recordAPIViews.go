@@ -1,7 +1,7 @@
 package Urls
 
 import (
-	"StudentMerit/HerokuDB"
+	"StudentMerit/AWSDB"
 	"StudentMerit/Structures"
 	"StudentMerit/auth"
 	"context"
@@ -39,14 +39,14 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-
-	qStr := fmt.Sprintf(`select addRecord(%v,%v,%v)`,
-		record.StudentId, record.ScoreId,record.UserAdded,
+	fmt.Println("Comment is ",record.Comment)
+	qStr := fmt.Sprintf(`call addRecord(%v,%v,%v,'%v')`,
+		record.StudentId, record.ScoreId, record.UserAdded, record.Comment,
 		)
 
 
 
-	_, err = HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+	_, err = AWSDB.AWSDB.Exec(context.Background(), qStr)
 
 	if err!=nil{
 		json.NewEncoder(w).Encode(
@@ -69,7 +69,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 
 		qStr := fmt.Sprintf(`SELECT * FROM getMyRecords(%v)`, user)
 
-		table, err:= HerokuDB.HEROKU_DB.Query(context.Background(), qStr)
+		table, err:= AWSDB.AWSDB.Query(context.Background(), qStr)
 
 		if err!=nil{
 			json.NewEncoder(w).Encode(
@@ -80,19 +80,21 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 		}
 		defer table.Close()
 
+
 		var myRecords []Structures.MyRecords
 		for table.Next(){
 			var rc Structures.MyRecords
-			table.Scan(
+			err = table.Scan(
 				&rc.Id,
-				&rc.StdId,
 				&rc.StdName,
 				&rc.StdSurname,
 				&rc.StdClass,
 				&rc.Action,
 				&rc.Points,
 				&rc.DateScoreAdded)
-
+			if err!=nil{
+				fmt.Println(err.Error())
+			}
 			rc.Formatted = rc.DateScoreAdded.Format(" 02-Jan-2006, 15:04")
 			myRecords=append(myRecords,rc)
 
@@ -115,7 +117,7 @@ func recordManager(w http.ResponseWriter, r *http.Request){
 
 		qStr := fmt.Sprintf(`SELECT deleteRecord(%v,%v)`, user,record_id)
 
-		row := HerokuDB.HEROKU_DB.QueryRow(context.Background(), qStr)
+		row := AWSDB.AWSDB.QueryRow(context.Background(), qStr)
 
 		var result byte
 		err:=row.Scan(&result)
@@ -157,7 +159,7 @@ func getRecordsForStudent(w http.ResponseWriter, r*http.Request){
 
 		qStr := fmt.Sprintf(`SELECT * FROM getrecordsforstudent(%v) `,id)
 
-		rows, err := HerokuDB.HEROKU_DB.Query(context.Background(),qStr)
+		rows, err := AWSDB.AWSDB.Query(context.Background(),qStr)
 		if err!=nil{
 			json.NewEncoder(w).Encode(
 				map[string]string{

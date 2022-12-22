@@ -1,0 +1,17 @@
+-- Table: public.user_class_number_added
+
+-- DROP TABLE IF EXISTS public.user_class_number_added;
+
+CREATE TABLE IF NOT EXISTS public.user_class_number_added
+(
+    id bigint NOT NULL DEFAULT nextval('user_class_number_added_id_seq'::regclass),
+    added_classes integer NOT NULL,
+    user_added bigint NOT NULL,
+    CONSTRAINT user_class_number_added_pkey PRIMARY KEY (id),
+    CONSTRAINT user_class_number_added_user_added_key UNIQUE (user_added)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.user_class_number_added
+    OWNER to shokonurs;

@@ -5,18 +5,15 @@ import (
 	"StudentMerit/auth"
 	"encoding/json"
 
-
 	"github.com/gorilla/mux"
 	"net/http"
-	"os"
-
 	//"net/url"
 )
 
 
 // Set mode=1 for local development,
-// Set mode=2 for Heroku
-var mode = 2
+// Set mode=2 for Remote (AWS)
+var mode = 1
 
 
 
@@ -34,11 +31,9 @@ var APIEP = map[string]string{
 
 func GetAPIEP() {
 
-	if mode == 1{
+
 		APIEP["host"] = "http://localhost:8080"
-	}else{
-		APIEP["host"] = "https://shokonurs-student-merit.herokuapp.com"
-	}
+
 
 }
 
@@ -99,14 +94,9 @@ func RunServerFunc(){
 	r.HandleFunc("/telegram_bot",BotTest.TelegramBotTest )
 
 
-	if mode==1{
-		// This is used for localserver
-		http.ListenAndServe(":8080", r)
-	}else{
-		// This is used for Heroku deployment
-		herokuPort := os.Getenv("PORT")
-		http.ListenAndServe(":"+herokuPort, r)
-	}
+
+
+	http.ListenAndServe(":8080", r)
 
 
 

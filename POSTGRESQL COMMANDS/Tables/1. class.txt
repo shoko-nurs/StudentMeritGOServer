@@ -1,0 +1,17 @@
+-- Table: public.class
+
+-- DROP TABLE IF EXISTS public.class;
+
+CREATE TABLE IF NOT EXISTS public.class
+(
+    id bigint NOT NULL DEFAULT nextval('class_id_seq'::regclass),
+    class character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    user_added bigint NOT NULL,
+    CONSTRAINT class_pkey PRIMARY KEY (id),
+    CONSTRAINT unique_class_str UNIQUE (class)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.class
+    OWNER to shokonurs;

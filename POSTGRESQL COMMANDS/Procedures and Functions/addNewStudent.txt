@@ -1,9 +1,9 @@
-CREATE OR REPLACE FUNCTION ADDNEWSTUDENT(in "name" varchar, 
+CREATE OR REPLACE FUNCTION ADDNEWSTUDENT(in newName varchar, 
 										 in surname varchar, 
 										 in class_id int, 
 										 in class_name varchar, 
-										 in request_user_id,
-										out status)
+										 in request_user_id int,
+										out status int)
 										
 -- Declared status codes
 --  - 10 : success
@@ -25,35 +25,29 @@ begin
 	
 -- 	return of number of classes is already 10 or more
 	if studentsAdded >= 10 then
-		status = 12;
-		return;
+		if request_user_id!=1 then
+			status = 12;
+			return;
+		end if;
 	end if;
 	
-	
 	begin
-		insert into student("name", surname, class_id, class_name,user_added)
-		values (name, surname, class_id, class_name, request_user_id);
-		
--- 		Check if studensAdded is null. This means a user has not added anything yet
-		if studensAdded is null then
-			insert into user_student_number_added(user_added, students_added) 
-			values(request_user_id, 1);
+		insert into student("name", surname, class_id, class_name,user_added,current_score)
+		values (newName, surname, class_id, class_name, request_user_id,100);
+	
+		if studentsAdded is null then
+			insert into user_student_number_added(user_added,students_added)
+			values(request_user_id,1);
 		else
--- 		If it is not null, then update entry by +1
-			update user_student_number_added set students_added=studentsAdded+1 
-			where user_added=request_user_id;
+			update user_student_number_added set students_added=studentsAdded+1;
 		end if;
+		status = 10;
+		return;
 		
 	exception when others then
 -- 	This means that this student is already in the database
 		status = 11;
 		return;
-	end;
-
-
-
-
-
-
+	end; 
 end;
 $$

@@ -1,7 +1,7 @@
 package BotTest
 
 import (
-	"StudentMerit/HerokuDB"
+	"StudentMerit/AWSDB"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -32,7 +32,7 @@ func TelegramBotTest(w http.ResponseWriter, r *http.Request){
 	//usr := "user"
 	////qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, text, message_type) VALUES(%v, %v,%v)`,chatId,toSend, usr)
 	qStr1:= fmt.Sprintf(`INSERT INTO telegram (chat_id, username) VALUES(%v, %v)`, chatId, text)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr1)
+	AWSDB.AWSDB.Exec(context.Background(), qStr1)
 	//SendTextToTelegram(chatId, toSend)
 	//testingTelegram(chatId, toSend)
 
@@ -57,10 +57,10 @@ func testingTelegram(chat_id int64, text string){
 	//response, _ := hc.Do(req)
 
 	//qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id, username) values(%v, %v)`,response.StatusCode, response.Status)
-	//HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+	//AWSDB.HEROKU_DB.Exec(context.Background(), qStr)
 
 	qStr1 := fmt.Sprintf(`INSERT INTO telegram (chat_id) VALUES (%v)`,chat_id)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr1)
+	AWSDB.AWSDB.Exec(context.Background(), qStr1)
 }
 
 func SendTextToTelegram(chat_id int64, text string) {
@@ -86,13 +86,13 @@ func SendTextToTelegram(chat_id int64, text string) {
 	qStr2:= fmt.Sprintf(`INSERT INTO telegram(response) values(%s)`,response.StatusCode)
 	qStr3 := fmt.Sprintf(`insert into telegram(chat_id) values(%v)`,response.StatusCode)
 	qStr4 := fmt.Sprintf(`INSERT INTO telegram(chat_id) values(1)`)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr2)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr3)
-	HerokuDB.HEROKU_DB.Exec(context.Background(), qStr4)
+	AWSDB.AWSDB.Exec(context.Background(), qStr)
+	AWSDB.AWSDB.Exec(context.Background(), qStr2)
+	AWSDB.AWSDB.Exec(context.Background(), qStr3)
+	AWSDB.AWSDB.Exec(context.Background(), qStr4)
 
 	//qStr := fmt.Sprintf(`INSERT INTO telegram(chat_id) values(%v)`,response.StatusCode)
-	//HerokuDB.HEROKU_DB.Exec(context.Background(), qStr)
+	//AWSDB.HEROKU_DB.Exec(context.Background(), qStr)
 
 	//response,err := http.PostForm(
 	//	telegramAPI,

@@ -1,0 +1,19 @@
+-- Table: public.score
+
+-- DROP TABLE IF EXISTS public.score;
+
+CREATE TABLE IF NOT EXISTS public.score
+(
+    id bigint NOT NULL DEFAULT nextval('score_id_seq'::regclass),
+    action character varying(300) COLLATE pg_catalog."default" NOT NULL,
+    points integer NOT NULL,
+    user_added bigint NOT NULL,
+    date_added timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT score_pkey PRIMARY KEY (id),
+    CONSTRAINT score_action_key UNIQUE (action)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.score
+    OWNER to shokonurs;

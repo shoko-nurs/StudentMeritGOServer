@@ -1,10 +1,10 @@
 package auth
 
 import (
+	"StudentMerit/AWSDB"
 	"StudentMerit/Structures"
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -31,12 +31,14 @@ func Authenticate(r *http.Request) (uint64,error){
 	token, _ := jwt.ParseWithClaims(tokenStr,
 										&MyClaims{},
 										func(token *jwt.Token)(interface{},error){
-											return []byte(os.Getenv("SECRET_KEY")), nil
+											return []byte(AWSDB.SECRET_KEY), nil
 										})
+
 
 	// Convert jwt.Claims into MyCustomStructure
 	claims,ok1 := token.Claims.(*MyClaims)
 	ok2 := token.Valid
+
 
 
 	if ok1 && ok2 {

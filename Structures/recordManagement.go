@@ -11,7 +11,7 @@ type Record struct{
 	StudentId uint64		     `json:"student_id,omitempty"`
 	ScoreId uint64				 `json:"score_id,omitempty"`
 	UserAdded uint64   			 `json:"user_added,omitempty"`
-
+	Comment string				 `json:"comment"`
 
 	// This part will be used for GET request
 	StdName string				`json:"student_name,omitempty"`

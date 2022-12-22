@@ -1,0 +1,27 @@
+-- Table public.record
+
+-- DROP TABLE IF EXISTS public.record;
+
+CREATE TABLE IF NOT EXISTS public.record
+(
+    id bigint NOT NULL DEFAULT nextval('record_id_seq'regclass),
+    to_student bigint NOT NULL,
+    score_type bigint NOT NULL,
+    from_user bigint NOT NULL,
+    date timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    comment text COLLATE pg_catalog.default,
+    CONSTRAINT record_pkey PRIMARY KEY (id),
+    CONSTRAINT FK_record_score FOREIGN KEY (score_type)
+        REFERENCES public.score (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT FK_record_student FOREIGN KEY (to_student)
+        REFERENCES public.student (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.record
+    OWNER to shokonurs;

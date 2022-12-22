@@ -1,0 +1,30 @@
+create or replace procedure addRecord(
+	in student_id int,
+	in score_id int,
+	in user_added int,
+	in "comment" varchar
+	
+)
+
+language plpgsql
+as $$
+
+declare 
+	pts int;
+begin
+	
+	-- Get points for the current score
+	select points from score into pts where id=score_id;
+	
+	-- Modify students score 
+	update student set current_score=current_score+pts 
+	where id=student_id;
+	
+	-- Save the scoring into the database
+	insert into record(to_student,score_type,from_user,"comment")
+	values(student_id,score_id,user_added,"comment");
+	
+	
+end;
+
+$$

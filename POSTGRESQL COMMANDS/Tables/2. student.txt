@@ -1,0 +1,29 @@
+-- Table: public.student
+
+-- DROP TABLE IF EXISTS public.student;
+
+CREATE TABLE IF NOT EXISTS public.student
+(
+    id bigint NOT NULL DEFAULT nextval('student_id_seq'::regclass),
+    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    surname character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    class_id bigint NOT NULL,
+    class_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    user_added bigint NOT NULL,
+    current_score bigint NOT NULL,
+    CONSTRAINT student_pkey PRIMARY KEY (id),
+    CONSTRAINT student_name_surname_key UNIQUE (name, surname),
+    CONSTRAINT "FK_student_class" FOREIGN KEY (class_id)
+        REFERENCES public.class (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT "FK_student_class_2" FOREIGN KEY (class_name)
+        REFERENCES public.class (class) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.student
+    OWNER to shokonurs;
